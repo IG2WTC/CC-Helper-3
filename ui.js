@@ -76,12 +76,12 @@ function formatPercent(value) {
  * @param {string} line - Die Log-Nachricht
  * @param {string} cls - CSS-Klasse für Styling (victory, defeat, info, etc.)
  */
-function log(line, cls=""){
+function log(line, cls = "", scroll = true){
   const el = document.createElement("div");
   el.className = cls;
   el.textContent = line;
   $("#battle-log").appendChild(el);
-  $("#battle-log").scrollTop = $("#battle-log").scrollHeight;
+  if (scroll) $("#battle-log").scrollTop = $("#battle-log").scrollHeight;
 }
 
 // Export für andere Module
