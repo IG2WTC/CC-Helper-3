@@ -1,0 +1,201 @@
+<!doctype html>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-glow"></div>
+      <h1>Cosmic Battle Simulator</h1>
+      <a href="https://kuzzigames.com/cosmic_collection/" class="tag" target="_blank">for Cosmic Collection by KuzziGames</a>
+    </div>
+    <nav class="actions">
+      <button id="btn-import" class="btn primary">Import Save</button>
+      <button id="btn-reset" class="btn danger">Reset</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="panel roster">
+      <h2>Cards</h2>
+      <div class="team-tools" style="display:flex; gap:8px; margin-bottom:8px; align-items:center; flex-wrap:wrap;">
+        <input id="team-search" placeholder="Search for card..." />
+        <div class="custom-dropdown">
+          <button class="dropdown-toggle" id="realm-dropdown-toggle">All Realms</button>
+          <div class="dropdown-menu" id="realm-dropdown-menu">
+            <label><input type="checkbox" value="all" checked id="realm-all"> All Realms</label>
+            <label><input type="checkbox" value="1" checked> 1 Rocks</label>
+            <label><input type="checkbox" value="2" checked> 2 Sea World</label>
+            <label><input type="checkbox" value="3" checked> 3 Bugdom</label>
+            <label><input type="checkbox" value="4" checked> 4 Aviary</label>
+            <label><input type="checkbox" value="5" checked> 5 Ancient Relics</label>
+            <label><input type="checkbox" value="6" checked> 6 Celestial Bodies</label>
+            <label><input type="checkbox" value="7" checked> 7 Mythical Beasts</label>
+            <label><input type="checkbox" value="8" checked> 8 Incremental Games</label>
+            <label><input type="checkbox" value="9" checked> 9 Spirit Familiars</label>
+            <label><input type="checkbox" value="10" checked> 10 Weapons</label>
+            <label><input type="checkbox" value="11" checked> 11 Boss Realm 1</label>
+            <label><input type="checkbox" value="12" checked> 12 Boss Realm 2</label>
+          </div>
+        </div>
+        <label><input type="checkbox" id="locked-filter" checked> Show Locked</label>
+        <select id="team-sort">
+          <option value="name">Name</option>
+          <option value="realm">Realm</option>
+          <option value="attack">ATK</option>
+          <option value="hp">HP</option>
+        </select>
+        <button id="toggle-sort-direction-roster" class="btn tiny">↑</button>
+      </div>
+      <div class="cards" id="player-cards"></div>
+    </section>
+
+    <section class="panel bosses">
+      <h2>Boss Selection</h2>
+      <div class="filters">
+        <input id="search" placeholder="Search for Boss/Card..." />
+        <div id="boss-realm-filters" style="display:flex; gap:4px;">
+          <label><input type="checkbox" value="11" checked> R11</label>
+          <label><input type="checkbox" value="12" checked> R12</label>
+        </div>
+        <select id="sort">
+          <option value="name">Name</option>
+          <option value="realm">Realm</option>
+          <option value="attack">Attack</option>
+          <option value="hp">HP</option>
+        </select>
+        <button id="toggle-sort-direction-boss" class="btn tiny">↑</button>
+      </div>
+      <div id="boss-list" class="list"></div>
+    </section>
+
+    <section class="panel battle">
+      <h2>Fight</h2>
+      <div id="global-effects" class="global-effects">
+        <div class="effect-item">
+          <span class="effect-label">Global Modifiers:</span>
+        </div>
+        <div class="effect-item">
+          <span class="effect-label">Crit Chance:</span>
+          <span class="effect-value" id="global-crit-chance">0%</span>
+        </div>
+        <div class="effect-item">
+          <span class="effect-label">Crit Damage:</span>
+          <span class="effect-value" id="global-crit-damage">0%</span>
+        </div>
+        <div class="effect-item">
+          <span class="effect-label">Team Size:</span>
+          <span class="effect-value" id="global-team-size">3</span>
+        </div>
+      </div>
+      <div class="setup">
+        <div class="combatants">
+          <div class="team">
+            <h3>Active Cards</h3>
+            <ul id="team-list" class="team-list"></ul>
+          </div>
+          <div class="vs">VS</div>
+          <div class="enemy">
+            <img id="boss-art" src="" alt="" style="width:200px;height:200px;display:block;margin-bottom:8px;">
+            <h3 id="boss-name">Kein Boss gewählt</h3>
+            <div id="boss-stats"></div>
+            <div id="boss-info"></div>
+          </div>
+          <div class="reserve">
+            <h4>Reserve</h4>
+            <ul id="reserve-list" class="reserve-list"></ul>
+          </div>
+          <div class="controls">
+            <button id="btn-start" class="btn primary" disabled>Start Battle</button>
+            <div class="toggle-container">
+              <label class="toggle-switch">
+                <input type="checkbox" id="chk-simulation" checked />
+                <span class="slider"></span>
+              </label>
+              <div class="labels">
+                <span class="label-on">Detail Mode</span>
+                <span class="label-off">Simulation Mode</span>
+              </div>
+            </div>
+            <input type="number" id="simulation-count" placeholder="Number of Simulations" min="1" max="100" style="display:none; margin-left:8px;" />
+            <button id="btn-clear-log" class="btn danger" style="margin-left: auto;">Clear Log</button>
+          </div>
+          <div class="log" id="battle-log"></div>
+        </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Import Save Dialog -->
+  <dialog id="import-dialog">
+    <form method="dialog" class="dialog">
+      <h3>Import Save</h3>
+      <p>Insert (Ctrl + V) your save data from Clipboard or upload a save file.</p>
+      <textarea id="import-text" rows="8" placeholder='{"cards":[...],"upgrades":{...}}'></textarea>
+        <div>
+          <button id="btn-import-cancel" class="btn danger">Cancel</button>
+          <button id="btn-import-apply" class="btn primary">Import</button>
+          <input type="file" id="import-file" accept=".json,.txt" style="margin-left:8px;">
+        </div>
+    </form>
+  </dialog>
+
+  <!-- Locked Card Dialog -->
+  <dialog id="locked-card-dialog">
+    <form method="dialog" class="dialog">
+      <h3>Locked Card</h3>
+      <p>In your Save this Card is currently locked. If you want you can still use it but you might have to insert missing Stats:</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label>Level: <input type="number" id="locked-level" min="1" /></label>
+        <label>Tier: <input type="number" id="locked-tier" min="1" /></label>
+        <label>Quantity: <input type="number" id="locked-quantity" min="1" /></label>
+      </div>
+      <div style="margin-top: 16px;">
+        <button id="locked-cancel" type="button" class="btn danger">Cancel</button>
+        <button id="locked-save" type="button" class="btn primary">Save Stats and Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="tpl-card">
+    <div class="card">
+      <div class="title"></div>
+      <img class="art" src="" alt="">
+      <div class="atk"></div>
+      <div class="hp"></div>
+      <div class="flags"></div>
+      <div class="actions">
+        <button class="btn tiny add-to-team">Add</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-boss">
+    <div class="row">
+      <div class="info">
+        <img class="art" src="" alt="">
+        <div>
+          <div class="title"></div>
+          <div class="sub"></div>
+        </div>
+      </div>
+      <div class="badges"></div>
+      <div class="actions">
+        <button class="btn small select-boss">Select</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Neue modulare Scripts -->
+  <script src="utils.js" type="module"></script>
+  <script src="state.js" type="module"></script>
+  <script src="ui.js" type="module"></script>
+  <script src="script.js" type="module"></script>
+
+  <footer class="footer">
+    <div class="footer-content">
+      By IG2WTC
+    </div>
+  </footer>
+</body>
+</html>
