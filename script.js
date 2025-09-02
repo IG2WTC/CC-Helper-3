@@ -321,7 +321,7 @@ function startBattle(){
         // Loggen der Ergebnisse
         result.logs.forEach(logLine => {
           if (logLine.startsWith("—")) {
-            log(logLine);
+            log(logLine, "", false);
           } else {
             const cls = logLine.includes('hits for') ? 'damage-boss' : 
                        logLine.includes('got hit') ? 'damage-team' : 
@@ -329,9 +329,10 @@ function startBattle(){
                        logLine.includes('moves up!') ? 'info' : 
                        logLine.includes('misses!') ? 'miss' : 
                        '';
-            log(logLine, cls);
+            log(logLine, cls, false);
           }
         });
+        log(""); // Empty log to scroll to bottom
       })
       .catch(error => {
         console.error("Battle error:", error);
