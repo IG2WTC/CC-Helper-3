@@ -61,6 +61,10 @@ function selectBoss(boss){
   const bossHp = battleSystem.calculateBossHP(boss);
   $("#boss-stats").textContent = `ATK ${fmt(bossAttack)} · HP ${fmt(bossHp)}`;
   
+  // Füge die berechneten Stats zum Boss-Objekt hinzu
+  State.selectedBoss.attack = bossAttack;
+  State.selectedBoss.hp = bossHp;
+  
   $("#boss-art").src = boss.art || "";
   $("#boss-art").alt = boss.name;
   
@@ -313,6 +317,12 @@ function startBattle(){
     measurePerformanceAsync(`Single Battle vs ${State.selectedBoss.name}`, () =>
       battleSystem.startBattle(State.team, State.selectedBoss, fast, State.upgrades, State.reserve, logFrequency, State.battleState)
     ).then(result => {
+        // Aktualisiere Boss HP nach dem Kampf
+        if (State.selectedBoss) {
+          State.selectedBoss.curHp = result.bossHealth;
+        }
+        renderBoss(); // Boss HP Bar aktualisieren
+        
         // Add info message if log frequency > 1
         if (logFrequency > 1 && !isSimulation) {
           result.logs.push("Info: The big Number of Log calls would cause lag spikes so we group them. The calculated result is still the same. Simulation Mode should not have this Problem.");

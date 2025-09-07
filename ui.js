@@ -267,24 +267,22 @@ function renderBoss(){
   
   // Berechne HP-Prozentsatz
   const maxHp = boss.hp; // Ursprüngliches HP als max HP
-  const hpPercent = Math.max(0, Math.min(100, (boss.hp / maxHp) * 100));
+  const currentHp = boss.curHp !== undefined ? boss.curHp : boss.hp;
+  const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
   
   hpBar.style.width = `${hpPercent}%`;
   hpBar.style.backgroundColor = hpPercent > 60 ? '#2ecc71' : hpPercent > 30 ? '#ffb144' : '#ff5e6a';
   
   const hpText = document.createElement("div");
   hpText.className = "hp-text";
-  hpText.textContent = `${fmt(boss.hp)}/${fmt(maxHp)} HP`;
+  hpText.textContent = `${fmt(currentHp)}/${fmt(maxHp)} HP`;
   
   hpBarContainer.appendChild(hpBar);
   hpBarContainer.appendChild(hpText);
   bossStats.appendChild(hpBarContainer);
   
-  // Boss Info (Realm, etc.)
-  bossInfo.innerHTML = `
-    <div><strong>Realm:</strong> ${boss.realm}</div>
-    <div><strong>Level:</strong> ${boss.level || 1}</div>
-  `;
+  // Boss Info (Realm, etc.) - entfernt
+  bossInfo.innerHTML = "";
 }
 
 // Export der Boss-Funktion
