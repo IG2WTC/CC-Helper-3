@@ -462,6 +462,7 @@ function initializeHPBars() {
   // Boss HP Bar initialisieren
   if (State.selectedBoss) {
     State.selectedBoss.maxHp = State.selectedBoss.hp;
+    State.selectedBoss.curHp = State.selectedBoss.hp; // Aktuelle HP initialisieren
   }
   
   // UI aktualisieren
